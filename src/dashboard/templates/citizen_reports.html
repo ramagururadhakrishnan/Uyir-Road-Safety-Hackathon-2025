@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Citizen Reports - Traffic Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Citizen-Reported Traffic Issues</h2>
+
+    <div class="report-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Issue Type</th>
+                    <th>Location</th>
+                    <th>Description</th>
+                    <th>Photo</th>
+                 
+                </tr>
+            </thead>
+            <tbody id="report-table-body">
+                <!-- JSON Data Will Be Inserted Here -->
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        function fetchReports() {
+            fetch("/reports")
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Reports Data:", data);
+                    const tableBody = document.getElementById("report-table-body");
+                    tableBody.innerHTML = "";  // Clear previous data
+
+                    data.forEach(report => {
+                        const row = `
+                            <tr>
+                                <td>${report.issueType}</td>
+                                <td>${report.location}</td>
+                                <td>${report.description}</td>
+                                <td><img src="${report.photo}" alt="Issue Image" width="100"></td>
+                              
+                            </tr>
+                        `;
+                        tableBody.innerHTML += row;
+                    });
+                })
+                .catch(error => console.error("Error fetching reports:", error));
+        }
+
+        // Fetch reports when page loads
+        document.addEventListener("DOMContentLoaded", fetchReports);
+    </script>
+{% endblock %}

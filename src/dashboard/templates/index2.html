@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Dashboard{% endblock %}
+
+{% block content %}
+    <div class="dashboard-container">
+        <!-- AQI Container -->
+        <div id="aqi-container">
+            <h3>Air Quality Index (AQI) - Coimbatore</h3>
+            <p><span id="aqi-value">Loading...</span></p>
+            <p><span id="aqi-status">Fetching...</span></p>
+        </div>
+
+        <!-- iRAP Compliance Container -->
+        <div id="irap-container">
+            <h3>iRAP Road Safety Compliance</h3>
+            <p><span id="irap-rating">Loading...</span></p>
+            <p><span id="irap-high-risk">Loading...</span></p>
+            <p><span id="irap-improvements">Loading...</span></p>
+        </div>
+
+        <!-- SDG Compliance Container -->
+        <div id="sdg-container">
+            <h3>SDG 3.6 Compliance - Road Safety</h3>
+            <p><span id="sdg-target">Loading...</span></p>
+            <p><span id="sdg-progress">Loading...</span></p>
+            <p><span id="sdg-initiatives">Loading...</span></p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        // Fetch AQI Data
+        function fetchAQI() {
+            fetch("/aqi/coimbatore")
+                .then(response => response.json())
+                .then(data => {
+                    console.log("API Response:", data);
+                    if (data && data.aqi !== undefined) {
+                        document.getElementById("aqi-value").innerText = "AQI Value: " + data.aqi;
+                        document.getElementById("aqi-status").innerText = "AQI Status: " + getAQIStatus(data.aqi);
+                    } else {
+                        document.getElementById("aqi-container").innerHTML = "<p>Error fetching AQI data.</p>";
+                    }
+                })
+                .catch(error => console.error("Error fetching AQI:", error));
+        }
+
+        // Fetch iRAP Compliance Data
+        function fetchiRAP() {
+            fetch("/irap_compliance")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("irap-rating").innerText = "Star Rating: " + data.star_rating + " ⭐";
+                    document.getElementById("irap-high-risk").innerText = "High-Risk Areas: " + data.high_risk_areas;
+                    document.getElementById("irap-improvements").innerText = "Safety Measures: " + data.safety_improvements.join(", ");
+                })
+                .catch(error => console.error("Error fetching iRAP data:", error));
+        }
+
+        // Fetch SDG Compliance Data
+        function fetchSDG() {
+            fetch("/sdg_compliance")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("sdg-target").innerText = "Goal: " + data.target;
+                    document.getElementById("sdg-progress").innerText = "Progress: " + data.current_reduction;
+                    document.getElementById("sdg-initiatives").innerText = "Initiatives: " + data.initiatives.join(", ");
+                })
+                .catch(error => console.error("Error fetching SDG data:", error));
+        }
+
+        // Determine AQI status text
+        function getAQIStatus(aqi) {
+            if (aqi >= 0 && aqi <= 50) return "Good";
+            if (aqi >= 51 && aqi <= 100) return "Moderate";
+            if (aqi >= 101 && aqi <= 150) return "Unhealthy for Sensitive Groups";
+            if (aqi >= 151 && aqi <= 200) return "Unhealthy";
+            if (aqi >= 201 && aqi <= 300) return "Very Unhealthy";
+            return "Hazardous";
+        }
+
+        // Fetch all data on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            fetchAQI();
+            fetchiRAP();
+            fetchSDG();
+        });
+    </script>
+{% endblock %}

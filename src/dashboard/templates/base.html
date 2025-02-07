@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Coimbatore Road Safety Dashboard | Tamilnadu{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+	<!-- ✅ Include Leaflet.js for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- ✅ Main CSS File -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!-- ✅ TensorFlow.js & COCO-SSD for Object Detection -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+
+	<!-- Copyright Information -->
+	<meta name="copyright" content="&copy; 2025 Ramaguru Radhakrishnan. All rights reserved.">
+</head>
+<body align="center">
+    <!-- 🔵 Fixed Header -->
+    <header>
+         <!-- Logos -->
+		  <div class="logo-container">
+			<img id="TN Police" class="logo" src="static/images/TNP.svg" alt="Uyir Logo" width=88>
+			<img id="GoTN" class="logo" src="static/images/TN.svg" alt="Coimbatore Police Logo" width=80>
+		  </div>
+
+		  <h3>Uyir Road Safety Hackathon 2025</h3>
+		  <h2>Interactive Road Safety Dashboard</h2>
+			<nav>
+				<a href="/dash">Dashboard</a>
+				<a href="/camera">Traffic Violations</a>
+				<a href="/heatmap">Traffic Heatmap</a>
+				<a href="/citizen_reports">Citizen Reports</a>
+			</nav>
+    </header>
+
+    <!-- 🔹 Dynamic Page Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 🔴 Fixed Footer -->
+    <footer>
+         <p>&copy; 2025 Ramaguru Radhakrishnan. All rights reserved. <br/> Developed with <span style="color: red;">&#10084;</span> for UYIR Road Safety Hackathon 2025</p>
+    </footer>
+	
+	{% block extra_scripts %}{% endblock %}
+</body>
+</html>

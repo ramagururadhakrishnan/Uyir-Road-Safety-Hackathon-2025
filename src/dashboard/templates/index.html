@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome - Uyir Road Safety Hackathon</title>
+  <!-- Link to Font Awesome for Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: white;
+      color: black;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Repeated Icon Background */
+    .background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw; /* Full width */
+      height: 100vh; /* Full height */
+      z-index: 0;
+      background: white;
+      display: flex;
+      flex-wrap: wrap; /* Allows wrapping of icons to create rows */
+      justify-content: space-around;
+      align-items: space-around;
+      opacity: 0.7; /* Reduced opacity */
+    }
+
+    .background i {
+      font-size: 40px;
+      color: #005f87;
+      margin: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      top: calc(var(--y, 0px));
+      left: calc(var(--x, 0px));
+    }
+
+    /* Content Container */
+    .container {
+      max-width: 1000px;
+      padding: 40px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      color: black;
+      z-index: 1;
+      position: relative;
+    }
+
+    .logo {
+      width: 300px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 20px;
+      color: white;
+      background: #0077b6;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #005f87;
+    }
+
+    button:active {
+      background: #004b6e;
+    }
+
+    /* Footer */
+    footer {
+      position: absolute;
+      bottom: 40px;
+      width: 100%;
+      text-align: center;
+      color: #555;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Repeated Icons Background -->
+  <div class="background">
+    <i class="fas fa-traffic-light"></i>
+    <i class="fas fa-car-crash"></i>
+    <i class="fas fa-road"></i>
+    <i class="fas fa-walking"></i>
+    <i class="fas fa-traffic-light"></i>
+    <i class="fas fa-car-crash"></i>
+    <i class="fas fa-road"></i>
+    <i class="fas fa-walking"></i>
+    <i class="fas fa-traffic-light"></i>
+    <i class="fas fa-car-crash"></i>
+    <i class="fas fa-road"></i>
+    <i class="fas fa-walking"></i>
+    <!-- Add more icons dynamically as needed -->
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <img class="logo" src="static/images/uyir_rsh-25.png" alt="Uyir Road Safety Logo">
+    <h1>Welcome to Uyir Road Safety Hackathon 2025</h1>
+    <h2>Interactive Road Safety Dashboard</h2>
+    <button><a href="/dash">Enter</a></button>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Ramaguru Radhakrishnan</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const icons = document.querySelectorAll('.background i');
+      const totalIcons = icons.length;
+
+      for (let i = 0; i < totalIcons; i++) {
+        const x = Math.random() * 100; // Random x between 0 and 100vw
+        const y = Math.random() * 100; // Random y between 0 and 100vh
+        icons[i].style.setProperty('--x', `${x}vw`);
+        icons[i].style.setProperty('--y', `${y}vh`);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+{% extends "base.html" %}
+
+{% block title %}Live Camera - Traffic Dashboard{% endblock %}
+
+{% block content %}
+
+<h2>Camera and Accident Detection</h2>
+
+<select id="cameraSelect">
+    <option value="live">Live Feed: CCTV-Gandhipuram-Bus-Stand</option>
+    <option value="video1">CCTV-Gandhipuram-100Ft-Signal</option>
+    <option value="video2">CCTV-Ukkadam-Bus-Stand</option>
+	<option value="video3">CCTV-Ukkadam-FlyOver</option>
+	<option value="video4">CCTV-Ramanathapuram-Main-Road</option>
+	<option value="video5">CCTV-Karumbukkadai-Arch</option>
+	<option value="video6">CCTV-Sungam-Bus-Stand</option>
+	<option value="video7">CCTV-RS-Puram</option>
+	<option value="video8">CCTV-Pollachi-Main-Road</option>
+	<option value="video9">CCTV-Coimbatore-Airport</option>
+	<option value="video10">CCTV-Vadavalli</option>
+	<option value="video11">CCTV-Kattoor</option>
+	<option value="video12">CCTV-Perur</option>
+	<option value="video13">CCTV-Kovai-Pudur</option>
+	<option value="video14">CCTV-Tidel-Park</option>
+	<option value="video15">CCTV-Park-Exit</option>
+	<option value="video16">CCTV-Textile-Bridge</option>
+	<option value="video17">CCTV-Kandhaswamy-Temple</option>
+	<option value="video18">CCTV-Ganga-Hospital</option>
+	<option value="video19">CCTV-EDU-Village</option>
+</select>
+
+<div id="cameraContainer">
+    <video id="cameraFeed" autoplay playsinline></video>
+    <canvas id="detectionOverlay"></canvas>
+	<button onclick="togglePlayPause()">Play/Pause</button>
+    <button onclick="toggleMute()">Mute/Unmute</button>
+
+</div>
+
+<div class="control-panel">
+    <label>Violation Location:</label>
+    <input type="text" id="violationLocation" placeholder="Enter Location">
+
+    <label>Vehicle Reg No:</label>
+    <input type="text" id="vehicleRegNo" placeholder="TN-XX-XXXX">
+
+    <label>Driver License No:</label>
+    <input type="text" id="driverLicenseNo" placeholder="DL-XXXXX">
+
+    <label>Video Reference:</label>
+    <input type="text" id="videoRef" placeholder="Video File URL">
+	<button onclick="reportViolation()">🚨 Report Violation</button>
+    
+    
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script>
+    const video = document.getElementById('cameraFeed');
+    const canvas = document.getElementById('detectionOverlay');
+    const ctx = canvas.getContext('2d');
+    const cameraSelect = document.getElementById('cameraSelect');
+
+    let model = null;
+    let detectionActive = true;
+
+    const cameraVideos = {
+        "video1": "static/videos/FC1.mp4",
+        "video2": "static/videos/FC2.mp4",
+        "video3": "static/videos/RC1.mp4"
+    };
+
+    async function loadModel() {
+        model = await cocoSsd.load();
+        console.log("COCO-SSD Model Loaded");
+    }
+
+    async function setupCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            return new Promise((resolve) => {
+                video.onloadedmetadata = () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    resolve(video);
+                };
+            });
+        } catch (error) {
+            console.error("Error accessing the camera:", error);
+        }
+    }
+
+    function playVideo(videoFile) {
+        video.srcObject = null;
+        video.src = videoFile;
+        video.load();
+        video.play();
+    }
+
+    function setVideoSource(videoSource) {
+        detectionActive = true;
+        if (videoSource === "live") {
+            setupCamera().then(() => detectObjects());
+        } else if (cameraVideos[videoSource]) {
+            playVideo(cameraVideos[videoSource]);
+            detectObjects();
+        }
+    }
+
+    async function detectObjects() {
+        if (!model) await loadModel();
+
+        const detectionLoop = setInterval(async () => {
+            if (!detectionActive) {
+                clearInterval(detectionLoop);
+                return;
+            }
+
+            if (video.readyState === 4) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const predictions = await model.detect(video);
+
+                let detectedVehicles = [];
+
+                predictions.forEach(prediction => {
+                    if (["car", "truck", "bus", "motorcycle"].includes(prediction.class)) {
+                        const [x, y, width, height] = prediction.bbox;
+                        const scaleX = canvas.width / video.videoWidth;
+                        const scaleY = canvas.height / video.videoHeight;
+
+                        const box = {
+                            x: x * scaleX,
+                            y: y * scaleY,
+                            width: width * scaleX,
+                            height: height * scaleY
+                        };
+
+                        detectedVehicles.push(box);
+
+                        ctx.strokeStyle = 'red';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(box.x, box.y, box.width, box.height);
+
+                        ctx.fillStyle = 'red';
+                        ctx.font = '16px Arial';
+                        ctx.fillText(
+                            `${prediction.class} (${Math.round(prediction.score * 100)}%)`,
+                            box.x,
+                            box.y > 10 ? box.y - 5 : 10
+                        );
+                    }
+                });
+
+                checkForCollisions(detectedVehicles);
+            }
+        }, 500);
+    }
+	
+	function togglePlayPause() {
+        if (video.paused) {
+            video.play();
+        } else {
+            video.pause();
+        }
+    }
+
+    function toggleMute() {
+        video.muted = !video.muted;
+    }
+
+    function zoomVideo() {
+        let zoomLevel = document.getElementById("zoomRange").value;
+        video.style.transform = `scale(${zoomLevel})`;
+    }
+
+    function checkForCollisions(vehicles) {
+        for (let i = 0; i < vehicles.length; i++) {
+            for (let j = i + 1; j < vehicles.length; j++) {
+                if (isCollision(vehicles[i], vehicles[j])) {
+                    showAccidentAlert();
+                    return;
+                }
+            }
+        }
+    }
+
+    function isCollision(box1, box2) {
+        return (
+            box1.x < box2.x + box2.width &&
+            box1.x + box1.width > box2.x &&
+            box1.y < box2.y + box2.height &&
+            box1.y + box1.height > box2.y
+        );
+    }
+
+    function showAccidentAlert() {
+        detectionActive = false;
+        alert("🚨 Accident Detected! Reporting to Blockchain...");
+
+        reportViolation();
+    }
+
+    // ETHEREUM BLOCKCHAIN INTEGRATION
+    const web3 = new Web3("https://sepolia.infura.io/v3/b26095b82535417295da371bc7146e8d");
+    const contractAddress = "0x4ddf5438751b6774da99d412746fddcaa49e6e10";
+    const contractABI = [
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_location",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_videoRef",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_vehicleRegNo",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_driverLicenseNo",
+				"type": "string"
+			}
+		],
+		"name": "logViolation",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "validateViolation",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "videoRef",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "vehicleRegNo",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "driverLicenseNo",
+				"type": "string"
+			}
+		],
+		"name": "ViolationLogged",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "ViolationValidated",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "admin",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "getViolation",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "location",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "videoRef",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "vehicleRegNo",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "driverLicenseNo",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "validated",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct TrafficViolation.Violation",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "violationCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "violations",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "videoRef",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "vehicleRegNo",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "driverLicenseNo",
+				"type": "string"
+			},
+			{
+				"internalType": "bool",
+				"name": "validated",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+    const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+	   async function reportViolation() {
+		const location = document.getElementById("violationLocation").value;
+		const videoRef = document.getElementById("videoRef").value;
+		const vehicleRegNo = document.getElementById("vehicleRegNo").value;
+		const driverLicenseNo = document.getElementById("driverLicenseNo").value;
+
+		if (!location || !videoRef || !vehicleRegNo || !driverLicenseNo) {
+			alert("⚠️ Please fill all fields before reporting!");
+			return;
+		}
+
+		// Request user to connect MetaMask
+		const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+		const sender = accounts[0];
+
+		// Prepare transaction data
+		const txData = contract.methods.logViolation(location, videoRef, vehicleRegNo, driverLicenseNo).encodeABI();
+
+		// Send transaction via MetaMask
+		ethereum.request({
+			method: "eth_sendTransaction",
+			params: [{
+				from: sender,
+				to: contractAddress,
+				data: txData
+			}]
+		})
+		.then(txHash => {
+			console.log("🚀 Violation Logged: Transaction Hash:", txHash);
+			alert(`✅ Violation Reported Successfully! Tx: ${txHash}`);
+		})
+		.catch(error => {
+			console.error("❌ Error Logging Violation:", error);
+			alert("❌ Failed to Log Violation!");
+		});
+	}
+
+
+    cameraSelect.addEventListener('change', (event) => {
+        setVideoSource(event.target.value);
+    });
+
+    setVideoSource(cameraSelect.value);
+</script>
+{% endblock %}
