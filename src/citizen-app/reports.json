@@ -1,0 +1,23 @@
+[
+    {
+        "issueType": "overspeeding",
+        "location": "K G Chavadi",
+        "description": "Auto hitting the parked vehicle ",
+        "nft": "",
+        "photo": "static/uploads\\1000049484.jpg"
+    },
+    {
+        "issueType": "pothole",
+        "location": "Gandhipuram ",
+        "description": "Road causing unnecessary traffic and falls.",
+        "nft": "",
+        "photo": "static/uploads\\1000049729.jpg"
+    },
+    {
+        "issueType": "traffic_signal",
+        "location": "Sai Baba Colony",
+        "description": "Traffic Signal causing congestion with unattended personnel",
+        "nft": "",
+        "photo": "static/uploads\\1000049730.jpg"
+    }
+]

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 
+        Uyir Road Safety Hackathon 2025 - Citizen Report & NFT Reward System
+        Author: Ramaguru Radhakrishnan
+        Email:  r_ramaguru@cb.amrita.edu
+        Date:   February 2025
+        License: MIT License
+        Version: 1.0
+
+        Description:
+        This webpage allows citizens to report road safety issues.
+        Upon submission, users can receive an NFT as a reward.
+    -->
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Coimbatore Road Safety Dashboard | Tamilnadu{% endblock %}</title>
+
+    <!-- ✅ Main CSS File -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!-- ✅ Leaflet.js for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- ✅ TensorFlow.js & COCO-SSD for Object Detection -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+
+    <!-- Copyright Information -->
+    <meta name="copyright" content="&copy; 2025 Ramaguru Radhakrishnan. All rights reserved.">
+</head>
+<body align="center">
+
+    <!-- 🔵 Fixed Header -->
+    <header>
+        <div class="logo-container">
+            <!-- 🔹 Tamil Nadu Police & Govt Logos -->
+            <img id="TN Police" class="logo" src="static/images/TNP.svg" alt="Uyir Logo" width=88>
+            <img id="GoTN" class="logo" src="static/images/TN.svg" alt="Coimbatore Police Logo" width=80>
+        </div>
+
+        <h3>Uyir Road Safety Hackathon 2025</h3>
+        <h2>Interactive Road Safety Dashboard</h2>
+    </header>
+
+    <!-- 🔴 Report Submission Form -->
+    <div class="container">
+        <h2>Citizen Reporting Platform</h2>
+        <form id="reportForm">
+            <!-- 🔹 Issue Type Dropdown -->
+            <div class="form-group">
+                <label for="issueType">Issue Type</label>
+                <select id="issueType" name="issueType" required>
+                    <option value="" disabled selected>Select issue type</option>
+                    <option value="pothole">Pothole</option>
+					<option value="umarked_pedestrain_crossing">Unmarked Pedestrain Crossing</option>
+                    <option value="road_damage">Road Damage</option>
+                    <option value="traffic_signal">Traffic Signal Issue</option>
+					<option value="overspeeding">Overspeeding</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <!-- 🔹 Location Input -->
+            <div class="form-group">
+                <label for="location">Location (e.g., Street name, Landmark)</label>
+                <input type="text" id="location" name="location" required>
+            </div>
+
+            <!-- 🔹 Description Input -->
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+
+            <!-- 🔹 Image Upload -->
+            <div class="form-group">
+                <label for="photo">Attach Photo (Optional)</label>
+                <input type="file" id="photo" name="photo" accept="image/*">
+            </div>
+
+            <!-- 🔹 Submit Button -->
+            <button type="submit" class="btn-submit">Submit Report and get NFT</button>
+        </form>
+    </div>
+
+    <!-- ✅ JavaScript for Handling Form Submission -->
+    <script>
+        document.getElementById('reportForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(this); // Create FormData object
+
+            // 🔵 Send data to Flask backend
+            fetch('/submit-report', {
+                method: 'POST',
+                body: formData // ✅ Do NOT use JSON.stringify here
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); // Show success message
+                
+                // 🎉 Open NFT link if available
+                if (data.nft_url) {
+                    alert("🎉 NFT Minted! View your NFT: " + data.nft_url);
+                    window.open(data.nft_url, '_blank'); // Open NFT in a new tab
+                }
+
+                document.getElementById('reportForm').reset(); // Reset form after submission
+            })
+            .catch(error => {
+                console.error('❌ Error:', error);
+            });
+        });
+    </script>
+
+</body>
+   <!-- 🔴 Fixed Footer -->
+    <footer>
+         <p>&copy; 2025 Ramaguru Radhakrishnan. All rights reserved. <br/> Developed with <span style="color: red;">&#10084;</span> for UYIR Road Safety Hackathon 2025</p>
+    </footer>
+</html>

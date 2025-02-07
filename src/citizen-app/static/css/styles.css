@@ -1,0 +1,113 @@
+/* 🔵 Reset & General Styles */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f1f1f1;
+    overflow-y: auto;  /* ✅ Allows scrolling if content overflows */
+}
+
+/* 🔵 Fixed Header */
+header {
+    background: white;
+    color: #005f87;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    width: 95%;
+    z-index: 1000;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 🟢 Prevent Content Overlap */
+body {
+    padding-top: 140px;  /* ✅ Prevents form from hiding behind header */
+    padding-bottom: 50px; /* ✅ Prevents footer from overlapping content */
+}
+
+/* 📌 Form Container */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    margin-top: 80px; /* ✅ Ensures spacing below header */
+}
+
+/* 📌 Form Elements */
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+.form-group {
+    margin: 15px 0;
+}
+
+.form-group input, 
+.form-group textarea, 
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-group textarea {
+    height: 100px;
+}
+
+/* ✅ Submit Button */
+.btn-submit {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.btn-submit:hover {
+    background-color: #218838;
+}
+
+/* 🔹 Responsive Styles */
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+    .btn-submit {
+        padding: 12px;
+    }
+}
+
+/* 🔴 Fixed Footer */
+footer {
+    background: #005f87;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-size: 14px;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+footer span {
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+}
