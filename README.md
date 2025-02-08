@@ -74,7 +74,16 @@ The topic I have selected for this hackathon is Interactive **Interface for Gove
 ### Rounds
 #### Round 1: Submitted on 5th Jan 2025 ![](https://img.shields.io/badge/-Online-silver) ![](https://img.shields.io/badge/Teams-3263-brown) ![](https://img.shields.io/badge/-Selected-darkgreen)  
 #### Round 2: Submitted on 23rd Jan 2025 ![](https://img.shields.io/badge/-Online-silver) ![](https://img.shields.io/badge/Teams-465-brown) ![](https://img.shields.io/badge/-Selected-darkgreen)  
-#### Grand Finale: 8th and 9th Jan 2025 ![](https://img.shields.io/badge/-Sri_Krishna_College_of_Engineering-gold) ![](https://img.shields.io/badge/Teams-145-brown)
+#### Grand Finale: 8th and 9th Jan 2025 ![](https://img.shields.io/badge/Sri_Krishna_College_of_Engineering-Table_17-gold) ![](https://img.shields.io/badge/Teams-145-brown)
+
+### Interactive Interface For Government Officials To Manage Coimbatore Traffic
+#### Features
+- Blockchain-enabled System (Demo using Ethereum, proposed blockchain Hyperledger Fabric)
+- AI-based Object Detection (Road Infrastructure, Vehicles, Pedestrains) and Accident Detection
+- Opensource and Lightweight Map Library
+- Multi-sourced Dashboard: HERE API, Local Sources and Citizen Reporting
+- NFT Rewards for Citizen Engagement
+- Live and Historical Analysis
 
 ### References
 - Kerala Road Safety Authority - Accident Dashboard. Retrieved from http://roadsafety.kerala.gov.in/accident-dashboard
