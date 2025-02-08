@@ -72,9 +72,9 @@ The **UYIR Road Safety Hackathon 2025** aims to inspire innovative and practical
 The topic I have selected for this hackathon is Interactive **Interface for Government Officials to Manage Coimbatore Traffic**.
 
 ### Rounds
-#### Round 1: Submitted on 5th Jan 2025 ![](https://img.shields.io/badge/-Online-silver) ![](https://img.shields.io/badge/-Selected-darkgreen)  
-#### Round 2: Submitted on 23rd Jan 2025 ![](https://img.shields.io/badge/-Online-silver) ![](https://img.shields.io/badge/-Selected-darkgreen)  
-#### Grand Finale: 8th and 9th Jan 2025 ![](https://img.shields.io/badge/-Sri_Krishna_College_of_Engineering-gold)
+#### Round 1: Submitted on 5th Jan 2025 ![](https://img.shields.io/badge/-Online-silver) ![](https://img.shields.io/badge/Teams-3263-brown) ![](https://img.shields.io/badge/-Selected-darkgreen)  
+#### Round 2: Submitted on 23rd Jan 2025 ![](https://img.shields.io/badge/-Online-silver) ![](https://img.shields.io/badge/Teams-465-brown) ![](https://img.shields.io/badge/-Selected-darkgreen)  
+#### Grand Finale: 8th and 9th Jan 2025 ![](https://img.shields.io/badge/-Sri_Krishna_College_of_Engineering-gold) ![](https://img.shields.io/badge/Teams-145-brown)
 
 ### References
 - Kerala Road Safety Authority - Accident Dashboard. Retrieved from http://roadsafety.kerala.gov.in/accident-dashboard
@@ -82,3 +82,5 @@ The topic I have selected for this hackathon is Interactive **Interface for Gove
 - Introducing the global HERE Traffic Dashboard: Tracking traffic for intelligent insights | HERE. Retrieved from https://www.here.com/about/press-releases/en/2018-17-09
 - Traffic Management Dashboard - JMT Technology Group. Retrieved from https://www.jmttg.com/home/projects/traffic-management-dashboard/
 - Live widget dashboards for traffic data visualizations and monitoring - DataFromSky. Retrieved from https://datafromsky.com/news/live-widget-dashboards-for-traffic-data-visualizations-and-monitoring/
+- Road Safety Projects - IndiaRAP. Retrieved from https://indiarap.org/road-safety-projects/
+- Road Safety | United Nations. Retrieved from https://www.un.org/en/safety-and-security/road-safety
